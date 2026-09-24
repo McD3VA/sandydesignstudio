@@ -449,12 +449,6 @@
         justify-content: center;
         background-color: transparent;
         position: relative;
-        transition: z-index 0.3s ease;
-      }
-
-      /* TOP LAYER POP-UP WHEN ACTIVE */
-      .member-img-wrapper.active {
-        z-index: 1000 !important;
       }
       
       .member-img-wrapper img {
@@ -497,8 +491,8 @@
         opacity: 0;
         visibility: hidden;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 99999 !important; /* Absolute top layer */
-        box-shadow: none !important;
+        z-index: 99999 !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
         pointer-events: none;
         word-wrap: break-word;
         overflow-wrap: break-word;
@@ -518,19 +512,45 @@
         display: block;
       }
 
-      /* ---------- KASI & GOWSHIK MOBILE TOOLTIP (APPEARS BELOW IMAGE) ---------- */
+      /* ---------- MOBILE CONTAINER CARD FOR KASI & GOWSHIK ---------- */
+      .mobile-member-card {
+        position: relative;
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: padding-bottom 0.3s ease, z-index 0.3s ease;
+      }
+
+      /* ---------- KASI & GOWSHIK MOBILE TOOLTIP (APPEARS BELOW ROLE TEXT ON TOP LAYER) ---------- */
       @media (max-width: 639px) {
+        .mobile-member-card.active {
+          z-index: 99999 !important;
+          padding-bottom: 150px; /* Expands bottom space so message box fits perfectly */
+        }
+
         #kasi-mob .bio-tooltip,
         #gowshik-mob .bio-tooltip {
-          top: calc(100% + 12px);
+          position: absolute;
+          top: calc(100% + 4px); /* Positioned below name and role text */
           bottom: auto;
+          left: 50%;
+          transform: translateX(-50%) scale(0.95);
         }
+
         #kasi-mob .bio-tooltip::after,
         #gowshik-mob .bio-tooltip::after {
           top: auto;
           bottom: 100%;
           border-width: 0 8px 8px 8px;
           border-color: transparent transparent #262626 transparent;
+        }
+
+        #kasi-mob.active .bio-tooltip,
+        #gowshik-mob.active .bio-tooltip {
+          opacity: 1;
+          visibility: visible;
+          transform: translateX(-50%) scale(1);
         }
       }
 
@@ -798,8 +818,8 @@
             </div>
 
             <!-- Mobile fallback grid including Madhankumar -->
-            <div class="grid grid-cols-2 gap-3 sm:hidden w-full max-w-[300px] mx-auto py-1">
-              <div class="flex flex-col items-center">
+            <div class="grid grid-cols-2 gap-4 sm:hidden w-full max-w-[320px] mx-auto py-1 overflow-visible">
+              <div class="mobile-member-card flex flex-col items-center relative" id="kasi-card-mob">
                 <div class="member-img-wrapper !w-[100px] !h-[135px] group cursor-pointer" id="kasi-mob">
                   <img src="https://imgh.in/host/h3j4vy" alt="Kasi" class="object-contain object-bottom" />
                   <div class="bio-tooltip">Allergic to unnecessary changes.</div>
@@ -807,7 +827,7 @@
                 <h3 class="text-[11px] font-bold text-gray-900 mt-1 text-center">Kasi</h3>
                 <p class="gradient-text text-[7px] uppercase font-semibold text-center">HEAD OF VIDEO EDITING</p>
               </div>
-              <div class="flex flex-col items-center">
+              <div class="mobile-member-card flex flex-col items-center relative" id="gowshik-card-mob">
                 <div class="member-img-wrapper !w-[110px] !h-[145px] group cursor-pointer" id="gowshik-mob">
                   <img src="https://imgh.in/host/m6zaa5" alt="Gowshik Kumar" class="object-contain object-bottom" />
                   <div class="bio-tooltip">Guarding the brand holy book</div>
@@ -815,7 +835,7 @@
                 <h3 class="text-[11px] font-bold text-gray-900 mt-1 text-center">Gowshik Kumar</h3>
                 <p class="gradient-text text-[7px] uppercase font-semibold text-center">BRAND MANAGER</p>
               </div>
-              <div class="flex flex-col items-center">
+              <div class="mobile-member-card flex flex-col items-center relative">
                 <div class="member-img-wrapper !w-[100px] !h-[135px] group cursor-pointer" id="madhan-mob">
                   <img src="https://imgh.in/host/kr4pbs" alt="Madhankumar" class="object-contain object-bottom" />
                   <div class="bio-tooltip">Stay silent until the design is done.</div>
@@ -823,7 +843,7 @@
                 <h3 class="text-[11px] font-bold text-gray-900 mt-1 text-center">Madhankumar</h3>
                 <p class="gradient-text text-[7px] uppercase font-semibold text-center">GRAPHICS DESIGNER</p>
               </div>
-              <div class="flex flex-col items-center">
+              <div class="mobile-member-card flex flex-col items-center relative">
                 <div class="member-img-wrapper !w-[100px] !h-[135px] group cursor-pointer" id="gopi-mob">
                   <img src="https://imgh.in/host/hjk4ok" alt="Gopi" class="object-contain object-bottom" />
                   <div class="bio-tooltip">Somewhere between silence and editing life choices</div>
@@ -831,7 +851,7 @@
                 <h3 class="text-[11px] font-bold text-gray-900 mt-1 text-center">Gopi</h3>
                 <p class="gradient-text text-[7px] uppercase font-semibold text-center">VIDEO EDITOR 1</p>
               </div>
-              <div class="flex flex-col items-center col-span-2">
+              <div class="mobile-member-card flex flex-col items-center col-span-2 relative">
                 <div class="member-img-wrapper !w-[100px] !h-[135px] group cursor-pointer" id="taufia-mob">
                   <img src="https://imgh.in/host/s2wmv0" alt="Taufia Zayan" class="object-contain object-bottom" />
                   <div class="bio-tooltip">Somehow still calm after the fifth revision.</div>
@@ -1230,10 +1250,13 @@
       document.addEventListener('click', (e) => {
         const wrappers = document.querySelectorAll('.member-img-wrapper');
         wrappers.forEach(w => {
+          const mobileCard = w.closest('.mobile-member-card');
           if (w.contains(e.target)) {
             w.classList.toggle('active');
+            if (mobileCard) mobileCard.classList.toggle('active');
           } else {
             w.classList.remove('active');
+            if (mobileCard) mobileCard.classList.remove('active');
           }
         });
       });
